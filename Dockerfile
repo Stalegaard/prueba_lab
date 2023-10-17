@@ -1,9 +1,15 @@
-FROM amazoncorretto:21
+FROM amazoncorretto:19-alpine-jdk as build
 
-WORKDIR /java-test
+WORKDIR /app/
 
-COPY ./Main.java ./Main.java
+COPY volume/HelloWorld.java /app/
 
-RUN javac ./Main.java
+RUN javac ./HelloWorld.java
 
-CMD ["java", "Main"]
+FROM amazoncorretto:19-alpine-jdk as execute
+
+WORKDIR /app/
+
+COPY --from=build /app/HelloWorld.class /app/HelloWorld.class
+
+ENTRYPOINT [ "java", "HelloWorld" ]
